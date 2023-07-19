@@ -11,7 +11,13 @@ CREATE TABLE book(
     ("TestBook-1", "Author-1", true),
      ("TestBook-2", "Author-2", true);
 
-
+CREATE TABLE bookshop(
+                         bkId INT PRIMARY KEY AUTO_INCREMENT,
+                         title VARCHAR(255),
+                         author VARCHAR(255),
+                         price double precision
+                         isAvailable BOOLEAN DEFAULT true
+);
 CREATE TABLE users (
   userId INT PRIMARY KEY AUTO_INCREMENT,
   name VARCHAR(255),

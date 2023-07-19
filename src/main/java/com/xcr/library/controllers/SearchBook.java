@@ -27,7 +27,7 @@ public class SearchBook extends HttpServlet {
         try {
             List<Book> books = bookDAO.getBookById(searchParameter); // Fetch the list of books from the database
             req.setAttribute("books", books); // Set the books as an attribute in the request
-            RequestDispatcher dispatcher = req.getRequestDispatcher("/book.jsp");
+            RequestDispatcher dispatcher = req.getRequestDispatcher("/index.jsp");
             dispatcher.forward(req, res); // Forward the request to the "book.jsp" file
         } catch (SQLException e) {
             throw new RuntimeException("Failed to retrieve books", e);

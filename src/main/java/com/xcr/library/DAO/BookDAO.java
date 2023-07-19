@@ -16,12 +16,14 @@ public class BookDAO {
     }
 
     public int addBook(Book book) throws SQLException {
-        String query = "INSERT INTO book (bkId, title, author, isAvailable) VALUES (?, ?, ?, ?)";
+        String query = "INSERT INTO bookshop (bkId, title, author,price isAvailable) VALUES (?, ?,?, ?, ?)";
         PreparedStatement preparedStatement = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
         preparedStatement.setInt(1, book.getBookId());
         preparedStatement.setString(2, book.getTitle());
         preparedStatement.setString(3, book.getAuthor());
-        preparedStatement.setBoolean(4, book.isAvailable());
+        preparedStatement.setDouble(4, book.getPrice());
+
+        preparedStatement.setBoolean(5, book.isAvailable());
 
         preparedStatement.executeUpdate();
         ResultSet rs = preparedStatement.getGeneratedKeys();
@@ -36,7 +38,7 @@ public class BookDAO {
 
     public List<Book> getAllBooks() throws SQLException {
         List<Book> books = new ArrayList<>();
-        String query = "SELECT * FROM book";
+        String query = "SELECT * FROM bookshop";
         Statement statement = connection.createStatement();
         ResultSet resultSet = statement.executeQuery(query);
 
@@ -44,15 +46,41 @@ public class BookDAO {
             int id = resultSet.getInt("bkId");
             String title = resultSet.getString("title");
             String author = resultSet.getString("author");
+            double price = resultSet.getDouble("price");
             boolean isAvailable = resultSet.getBoolean("isAvailable");
-            Book book = new Book( id, title, author, isAvailable);
+            Book book = new Book( id, title, author,price, isAvailable);
             books.add(book);
         }
         return books;
     }
+    public List<Book> getBookList(List<Integer> bookIds) throws SQLException {
+        List<Book> books = new ArrayList<>();
+
+        String query = "SELECT * FROM bookshop WHERE bkId = ?";
+        PreparedStatement preparedStatement = connection.prepareStatement(query);
+
+        for (int bookId : bookIds) {
+            preparedStatement.setInt(1, bookId); // Set the book ID parameter in the prepared statement
+            ResultSet rs = preparedStatement.executeQuery();
+
+            while (rs.next()) {
+                int fetchedBookId = rs.getInt("bkId");
+                String title = rs.getString("title");
+                String author = rs.getString("author");
+                double price = rs.getDouble("price");
+                boolean isAvailable = rs.getBoolean("isAvailable");
+
+                Book book = new Book(fetchedBookId, title, author, price, isAvailable);
+                books.add(book);
+            }
+        }
+
+        return books;
+    }
+
     public List<Book> getBookById(int id) throws SQLException {
         List<Book> books = new ArrayList<>();
-        String query = "SELECT * FROM book WHERE bkId = ?";
+        String query = "SELECT * FROM bookshop WHERE bkId = ?";
         PreparedStatement preparedStatement = connection.prepareStatement(query);
         preparedStatement.setInt(1, id); // Set the ID parameter in the prepared statement
         ResultSet rs = preparedStatement.executeQuery();
@@ -61,8 +89,10 @@ public class BookDAO {
             int bookId = rs.getInt("bkId");
             String title = rs.getString("title");
             String author = rs.getString("author");
+            double price = rs.getDouble("price");
+
             boolean isAvailable = rs.getBoolean("isAvailable");
-            Book book = new Book(bookId, title, author, isAvailable);
+            Book book = new Book(bookId, title, author,price, isAvailable);
             books.add(book);
         }
 
